@@ -1,0 +1,48 @@
+# 
+# Path of the images
+path: './imageDataset/'
+# Selected AruCo dictionary
+aruco_dict: 'aruco.DICT_3X3_1'
+# Number of calibration runs
+runs: 1000
+# Number of selcted images per calibration run
+numberOfImages: 15
+# Criteria for findCornerSubPix
+criteria:
+  maxIter: 150
+  diff: 0.25
+# Sidelength of one chessboard tile
+gridSize: 50.5
+# Sidelength of the AruCo marker
+arucoSize: 161.5
+# Which images should be plotted (if 'plot' is set to true below)
+plotList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+# For every list entry, a calibration run is down
+# Start with only the chessboard corners around the AruCo marker and end with every corner
+# Then reduce the search radius sr to robustify the search
+# If plot == True, the information of the images of 'plotList' will be shown
+calibrations:
+  - rows: 7
+    columns: 7
+    sr: 7
+    plot: False
+  - rows: 9
+    columns: 11
+    sr: 7
+    plot: False
+  - rows: 9
+    columns: 11
+    sr: 5
+    plot: False
+  - rows: 9
+    columns: 11
+    sr: 4
+    plot: False
+  - rows: 9
+    columns: 11
+    sr: 2
+    plot: False
+  - rows: 9
+    columns: 11
+    sr: 1
+    plot: False
