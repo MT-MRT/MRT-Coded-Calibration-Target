@@ -5,6 +5,7 @@ Created on Sun Jan 17 11:06:18 2021
 """
 
 # import self-written functions
+from numpy.lib.function_base import quantile
 import featureFunctions as ff
 
 # import standard libaries
@@ -87,11 +88,18 @@ if __name__ == '__main__':
 
     # Calculate and print the means and stds of the statistical multi-calibration
     rmse_all = np.asarray(rmse_all)
+    rmse_am = np.argwhere(rmse_all < np.quantile(rmse_all, 0.75))
+    rmse_quant = rmse_all[rmse_am]
+
     mtx_all = np.asarray(mtx_all)
+    mtx_quant = mtx_all[rmse_am,:,:]
+
     dist_all = np.asarray(dist_all)
-    print('rmse Mean:', np.mean(rmse_all, axis = 0))
-    print('rmse Std:', np.std(rmse_all, axis = 0))
-    print('mtx Mean:', np.mean(mtx_all, axis = 0))
-    print('mtx Std:', np.std(mtx_all, axis = 0))
-    print('dist Mean:', np.mean(dist_all, axis = 0))
-    print('dist Std:', np.std(dist_all, axis = 0))
+    dist_quant = dist_all[rmse_am,:]
+
+    print('rmse Mean:', np.mean(rmse_quant, axis = 0))
+    print('rmse Std:', np.std(rmse_quant, axis = 0))
+    print('mtx Mean:', np.mean(mtx_quant, axis = 0))
+    print('mtx Std:', np.std(mtx_quant, axis = 0))
+    print('dist Mean:', np.mean(dist_quant, axis = 0))
+    print('dist Std:', np.std(dist_quant, axis = 0))

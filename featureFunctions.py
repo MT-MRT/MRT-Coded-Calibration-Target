@@ -92,6 +92,40 @@ def calibrationCorners(basicObjPoints, tvec, rvec, mtx, dist, search_radius, img
 
     return targetImgPointsSP, targetObjPoints, projImgPoints
 
+def deleteAruCoHidden(gridHight, gridWidth, parameter):
+    if parameter['bottomLeftField'] == 'white':
+        if (parameter['gridMaxHight'] - gridHight) + (parameter['gridMaxWidth'] - gridWidth) % 4 == 0:
+            bottomLeftField = 0
+        else:
+            bottomLeftField = 1
+    else:
+        if (parameter['gridMaxHight'] - gridHight) + (parameter['gridMaxWidth'] - gridWidth) % 4 == 0:
+            bottomLeftField = 1
+        else:
+            bottomLeftField = 0
+    delIndex = []
+    for i in range(gridHight * gridWidth):
+        minrow = (gridWidth-parameter['aruCoHiddenSize']-1)/2
+        maxrow = (gridWidth-parameter['aruCoHiddenSize']-1)/2+parameter['aruCoHiddenSize']
+        mincol = (gridHight-parameter['aruCoHiddenSize']-1)/2
+        maxcol = (gridHight-parameter['aruCoHiddenSize']-1)/2+parameter['aruCoHiddenSize']
+        if (minrow <= i % gridWidth <= maxrow) and (mincol <= int(i / gridWidth) <= maxcol):
+            delIndex.append(i)
+        odd = (int(i % gridWidth) + int(i / gridWidth) + bottomLeftField) % 2
+        if (i % gridWidth == minrow) and (int(i / gridWidth) == mincol):
+            if odd == 0:
+                del delIndex[-1]
+        if (i % gridWidth == minrow) and (int(i / gridWidth) == maxcol):
+            if odd == 1:
+                del delIndex[-1]
+        if (i % gridWidth == maxrow) and (int(i / gridWidth) == mincol):
+            if odd == 1:
+                del delIndex[-1]
+        if (i % gridWidth == maxrow) and (int(i / gridWidth) == maxcol):
+            if odd == 0:
+                del delIndex[-1]
+    return delIndex
+
 
 def calibrateCoded(parameter, img_all, gridHight, gridWidth, mtx, dist, search_radius = 15, plot=False, oldAllObjPoints = [], oldAllImgPoints = []):
     
@@ -104,15 +138,7 @@ def calibrateCoded(parameter, img_all, gridHight, gridWidth, mtx, dist, search_r
     # elif gridHight == 7 and gridWidth == 9:
     #     delIndex = [22, 23, 30, 31, 32, 39, 40] # TODO: automatisch berechnen?
 
-    if gridHight == 7 and gridWidth == 7:
-        delIndex = [8, 9, 10, 11, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26, 29, 30, 31, 32, 33, 37, 38, 39, 40]
-    elif gridHight == 9 and gridWidth == 11:
-        # delIndex = [22, 23, 30, 31, 32, 39, 40] # TODO: automatisch berechnen?
-        delIndex = [25, 26, 27, 28, 36, 37, 38, 39, 40, 47, 48, 49, 50, 51, 58, 59, 60, 61, 62, 70, 71, 72, 73]
-
-    else:
-        print('Wrong parameters!')
-        exit()
+    delIndex = deleteAruCoHidden(gridHight, gridWidth, parameter)
 
     # Get the object points
     basicObjPoints = [0]*gridHight*gridWidth
