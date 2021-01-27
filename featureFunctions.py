@@ -4,12 +4,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Print the results in the console
-def printResults(mtx, dist, ret, gridHight = -1, gridWidth = -1, sr = -1):
+def printResults(mtx, dist, ret, gridHeight = -1, gridWidth = -1, sr = -1):
     print("Calibration executed\n")
     if sr != -1:
         print('Search radius:\n', sr, "\n")
-    if gridHight != -1 and gridWidth != -1:
-        print('Target size:\n', gridHight, gridWidth, "\n")
+    if gridHeight != -1 and gridWidth != -1:
+        print('Target size:\n', gridHeight, gridWidth, "\n")
     print("Camera matrix:\n"+str(mtx)+"\n")
     print("distorsion coefs:\n"+str(dist)+"\n")
     print('RMSE:', ret)
@@ -92,23 +92,24 @@ def calibrationCorners(basicObjPoints, tvec, rvec, mtx, dist, search_radius, img
 
     return targetImgPointsSP, targetObjPoints, projImgPoints
 
-def deleteAruCoHidden(gridHight, gridWidth, parameter):
+# Calculate the corners which are hidden by the AruCo marker in the checkerboard center
+def deleteAruCoHidden(gridHeight, gridWidth, parameter):
     if parameter['bottomLeftField'] == 'white':
-        if (parameter['gridMaxHight'] - gridHight) + (parameter['gridMaxWidth'] - gridWidth) % 4 == 0:
+        if (parameter['gridMaxHeight'] - gridHeight) + (parameter['gridMaxWidth'] - gridWidth) % 4 == 0:
             bottomLeftField = 0
         else:
             bottomLeftField = 1
     else:
-        if (parameter['gridMaxHight'] - gridHight) + (parameter['gridMaxWidth'] - gridWidth) % 4 == 0:
+        if (parameter['gridMaxHeight'] - gridHeight) + (parameter['gridMaxWidth'] - gridWidth) % 4 == 0:
             bottomLeftField = 1
         else:
             bottomLeftField = 0
     delIndex = []
-    for i in range(gridHight * gridWidth):
+    for i in range(gridHeight * gridWidth):
         minrow = (gridWidth-parameter['aruCoHiddenSize']-1)/2
         maxrow = (gridWidth-parameter['aruCoHiddenSize']-1)/2+parameter['aruCoHiddenSize']
-        mincol = (gridHight-parameter['aruCoHiddenSize']-1)/2
-        maxcol = (gridHight-parameter['aruCoHiddenSize']-1)/2+parameter['aruCoHiddenSize']
+        mincol = (gridHeight-parameter['aruCoHiddenSize']-1)/2
+        maxcol = (gridHeight-parameter['aruCoHiddenSize']-1)/2+parameter['aruCoHiddenSize']
         if (minrow <= i % gridWidth <= maxrow) and (mincol <= int(i / gridWidth) <= maxcol):
             delIndex.append(i)
         odd = (int(i % gridWidth) + int(i / gridWidth) + bottomLeftField) % 2
@@ -127,24 +128,24 @@ def deleteAruCoHidden(gridHight, gridWidth, parameter):
     return delIndex
 
 
-def calibrateCoded(parameter, img_all, gridHight, gridWidth, mtx, dist, search_radius = 15, plot=False, oldAllObjPoints = [], oldAllImgPoints = []):
+def calibrateCoded(parameter, img_all, gridHeight, gridWidth, mtx, dist, search_radius = 15, plot=False, oldAllObjPoints = [], oldAllImgPoints = []):
     
     # get grid- and AruCo-size from the parameters
     gridSize, arucoSize = parameter['gridSize'], parameter['arucoSize']
 
     # Calculate which checkerboard corners are missing because of the AruCo marker
-    # if gridHight == 5 and gridWidth == 5:
+    # if gridHeight == 5 and gridWidth == 5:
     #     delIndex = [7, 8, 11, 12, 13, 16, 17]
-    # elif gridHight == 7 and gridWidth == 9:
+    # elif gridHeight == 7 and gridWidth == 9:
     #     delIndex = [22, 23, 30, 31, 32, 39, 40] # TODO: automatisch berechnen?
 
-    delIndex = deleteAruCoHidden(gridHight, gridWidth, parameter)
+    delIndex = deleteAruCoHidden(gridHeight, gridWidth, parameter)
 
     # Get the object points
-    basicObjPoints = [0]*gridHight*gridWidth
-    for j in range(gridHight):
+    basicObjPoints = [0]*gridHeight*gridWidth
+    for j in range(gridHeight):
         for i in range(gridWidth):
-            basicObjPoints[i+gridWidth*j] = np.array([gridSize*i-gridWidth//2*gridSize,gridSize*j-gridHight//2*gridSize,0.],np.float32)
+            basicObjPoints[i+gridWidth*j] = np.array([gridSize*i-gridWidth//2*gridSize,gridSize*j-gridHeight//2*gridSize,0.],np.float32)
     sortedDelIndex = sorted(delIndex, reverse = True)
     for i in sortedDelIndex:
         del basicObjPoints[i]
@@ -197,6 +198,6 @@ def calibrateCoded(parameter, img_all, gridHight, gridWidth, mtx, dist, search_r
     rmse, mtx, dist, _ , _ = cv2.calibrateCamera(allObjPoints, allImgPoints, img.shape[0:2], mtx, dist)#, flags = cv2.CALIB_FIX_K3)
 
     # Print the results
-    printResults(mtx, dist, rmse, gridHight, gridWidth, search_radius)
+    printResults(mtx, dist, rmse, gridHeight, gridWidth, search_radius)
     
     return rmse, mtx, dist, allObjPoints, allImgPoints
