@@ -47,10 +47,6 @@ calibrations:
     plot: False
   - rows: 9
     columns: 11
-    sr: 6
-    plot: False
-  - rows: 9
-    columns: 11
     sr: 4
     plot: False
   - rows: 9
@@ -66,5 +62,5 @@ calibrations:
 ### Other
 ######################################
 
-# Which images should be plotted (if 'plot' is set to true below) last
-plotList: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 14]
+# Which images should be plotted (if 'plot' is set to true below)
+plotList: [0]

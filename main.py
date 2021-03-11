@@ -78,9 +78,14 @@ if __name__ == '__main__':
         oaip = []
 
         # Run the calibration jobs defined in the parameters file
-        for calibration in parameter['calibrations']:
-            rmse, mtx, dist, oaop, oaip = ff.calibrateCoded(parameter, img_sub, calibration['rows'], calibration['columns'], mtx, dist, search_radius = calibration['sr'], plot = calibration['plot'], oldAllObjPoints = oaop, oldAllImgPoints = oaip)
-        
+        try:
+            for calibration in parameter['calibrations']:
+                rmse, mtx, dist, oaop, oaip = ff.calibrateCoded(parameter, img_sub, calibration['rows'], calibration['columns'], mtx, dist, search_radius = calibration['sr'], plot = calibration['plot'], oldAllObjPoints = oaop, oldAllImgPoints = oaip)
+        except:
+            rmse = rmse_all[-1] * np.nan
+            mtx = mtx_all[-1] * np.nan
+            dist = dist_all[-1] * np.nan
+
         # Append the results to the lists
         rmse_all.append(rmse)
         mtx_all.append(mtx)
@@ -88,7 +93,7 @@ if __name__ == '__main__':
 
     # Calculate and print the means and stds of the statistical multi-calibration
     rmse_all = np.asarray(rmse_all)
-    rmse_am = np.argwhere(rmse_all < np.quantile(rmse_all, 0.75))
+    rmse_am = np.argwhere(rmse_all < np.nanquantile(rmse_all, 0.75))
     rmse_quant = rmse_all[rmse_am]
 
     mtx_all = np.asarray(mtx_all)
@@ -97,9 +102,11 @@ if __name__ == '__main__':
     dist_all = np.asarray(dist_all)
     dist_quant = dist_all[rmse_am,:]
 
-    print('rmse Mean:', np.mean(rmse_quant, axis = 0))
-    print('rmse Std:', np.std(rmse_quant, axis = 0))
-    print('mtx Mean:', np.mean(mtx_quant, axis = 0))
-    print('mtx Std:', np.std(mtx_quant, axis = 0))
-    print('dist Mean:', np.mean(dist_quant, axis = 0))
-    print('dist Std:', np.std(dist_quant, axis = 0))
+    print('rmse Mean:', np.nanmean(rmse_quant, axis = 0))
+    print('rmse Std:', np.nanstd(rmse_quant, axis = 0))
+    print('mtx Mean:', np.nanmean(mtx_quant, axis = 0))
+    print('mtx Std:', np.nanstd(mtx_quant, axis = 0))
+    print('dist Mean:', np.nanmean(dist_quant, axis = 0))
+    print('dist Std:', np.nanstd(dist_quant, axis = 0))
+
+    np.savez('./results_' + str(parameter['runs']) + '_' + str(parameter['numberOfImages']) + '_aruco.npz', name1=rmse_all, name2=mtx_all, name3=dist_all)
