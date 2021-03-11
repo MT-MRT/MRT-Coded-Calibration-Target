@@ -1,2 +1,3 @@
 # MRT-Coded-Calibration-Target
-A Coded Checkerboard Target for an Improved Geometrical Calibration of Infrared-Cameras
+
+Iterative corner detection of a coded checkerboard target for the geometric calibration of infrared cameras
