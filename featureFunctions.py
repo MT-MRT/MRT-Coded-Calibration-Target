@@ -34,15 +34,15 @@ def plotFunc(img_num, targetObjPoints, projImgPoints, targetImgPointsSP, frame_m
 
     ax1.set_title("Object Points")
     ax1.set(xlabel='[mm]', ylabel='[mm]')
-    for i in range(len(targetObjPoints)):
+    for i, _ in enumerate(targetObjPoints):
         ax1.plot(targetObjPoints[i][0],targetObjPoints[i][1],"o",color="g")
 
     ax2.set_title("Image Points")
     ax2.set(xlabel='[px]', ylabel='[px]')
     ax2.imshow(frame_markers)
-    for i in range(len(projImgPoints)):
+    for i, _ in enumerate(projImgPoints):
         ax2.plot(projImgPoints[i][0][0],projImgPoints[i][0][1],"x",color="b")
-    for i in range(len(targetImgPointsSP)):
+    for i, _ in enumerate(targetImgPointsSP):
         ax2.plot(targetImgPointsSP[i][0],targetImgPointsSP[i][1],"x",color="r")
     plt.show()
 
@@ -51,25 +51,25 @@ def calibrationCorners(basicObjPoints, tvec, rvec, mtx, dist, search_radius, img
 
     # Calculate with marker pose
     tg = np.asarray(basicObjPoints)
-    for i in range(len(basicObjPoints)):
+    for i, _ in enumerate(basicObjPoints):
         v = np.dot(cv2.Rodrigues(rvec)[0], basicObjPoints[i])
         tg[i] = tvec + v
-    
+
     projImgPoints, _ = cv2.projectPoints(tg,np.array([0.0,0.0,0.0]),np.array([0.0,0.0,0.0]), mtx, dist)
     
     # Delete obj/img Points that are not in the picture
     targetObjPoints = []
     targetImgPoints = []
 
-    for i in range(len(projImgPoints)):
+    for i, _ in enumerate(projImgPoints):
         if projImgPoints[i][0][0] > 0 and projImgPoints[i][0][0] < img.shape[1]:
             if projImgPoints[i][0][1] > 0 and projImgPoints[i][0][1] < img.shape[0]:
                 targetImgPoints.append(projImgPoints[i][0])
                 targetObjPoints.append(basicObjPoints[i])
-                
+
     # convert imgPoints from list to array
     targetImgPointsArray = np.array([[0., 0.]]*len(targetImgPoints),np.float32)
-    for i in range(len(targetImgPoints)):
+    for i, _ in enumerate(targetImgPoints):
         targetImgPointsArray[i] = targetImgPoints[i]
 
     # Corner subpixel detection
@@ -77,18 +77,18 @@ def calibrationCorners(basicObjPoints, tvec, rvec, mtx, dist, search_radius, img
     targetImgPointsArray = cv2.cornerSubPix(gray,targetImgPointsArray,(search_radius,search_radius),(-1,-1),criteria)
 
     targetImgPointsSP = []
-    for i in range(len(targetImgPointsArray)):
+    for i, _ in enumerate(targetImgPointsArray):
         targetImgPointsSP.append(targetImgPointsArray[i])
     
     # Delete not detected corners
     delIndexSP = []
-    for i in range(len(targetImgPointsArray)):
+    for i, _ in enumerate(targetImgPointsArray):
         if all(targetImgPointsSP[i] == targetImgPoints[i]):
             delIndexSP.append(i)
     sortedDelIndexSP = sorted(delIndexSP, reverse = True)
     for i in sortedDelIndexSP:
         del targetImgPointsSP[i]
-        del targetObjPoints[i] 
+        del targetObjPoints[i]
 
     return targetImgPointsSP, targetObjPoints, projImgPoints
 
@@ -128,8 +128,14 @@ def deleteAruCoHidden(gridHeight, gridWidth, parameter):
     return delIndex
 
 
-def calibrateCoded(parameter, img_all, gridHeight, gridWidth, mtx, dist, search_radius = 15, plot=False, oldAllObjPoints = [], oldAllImgPoints = []):
-    
+def calibrateCoded(parameter, img_all, gridHeight, gridWidth, mtx, dist, search_radius = 15, plot=False, oldAllObjPoints = None, oldAllImgPoints = None):
+
+    if oldAllObjPoints is None:
+        oldAllObjPoints = []
+
+    if oldAllImgPoints is None:
+        oldAllImgPoints = []
+
     # get grid- and AruCo-size from the parameters
     gridSize, arucoSize = parameter['gridSize'], parameter['arucoSize']
 

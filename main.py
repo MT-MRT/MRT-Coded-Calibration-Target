@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+
 """
 Created on Sun Jan 17 11:06:18 2021
 @author: ebert, schramm
 """
 
 # import self-written functions
-from numpy.lib.function_base import quantile
 import featureFunctions as ff
 
 # import standard libaries
@@ -45,7 +45,7 @@ if __name__ == '__main__':
         else:
             print('No corner found in', img_name)
             del(img_all[-1])
-    
+
     print('-' * 60)
     print('Target found in', len(img_all), 'images')
 
