@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-"""
+""" main function
+
 Created on Sun Jan 17 11:06:18 2021
 @author: ebert, schramm
 """
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     rmse_all = []
     mtx_all = []
     dist_all = []
-    
+
     # Loop over every run
     for i in range(parameter['runs']):
         print('-' * 60)
@@ -66,13 +67,13 @@ if __name__ == '__main__':
         img_sub = [img_all[i] for i in num_sub]
         imgCorners_sub = [imgCorners[i] for i in num_sub]
         objCorners = [np.array([np.array([0.,0.,0.]),np.array([0.,arucoSize,0.]),np.array([arucoSize,arucoSize,0.]),np.array([arucoSize,0.,0.])]).astype(np.float32)]*len(imgCorners_sub)
-        
+
         # Calculate initial camera parameters based on the 4 AruCo corners
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objCorners, imgCorners_sub, img_sub[0].shape[0:2], camera_matrix_mrt, dist_coeffs_mrt, flags=cv2.CALIB_FIX_K1+cv2.CALIB_FIX_K2+cv2.CALIB_FIX_K3+cv2.CALIB_FIX_K4+cv2.CALIB_FIX_K5+cv2.CALIB_ZERO_TANGENT_DIST)
-        
+
         # Print the result
         ff.printResults(mtx, dist, ret)
-        
+
         # Intitialize the oldPoints list
         oaop = []
         oaip = []

@@ -56,7 +56,7 @@ def calibrationCorners(basicObjPoints, tvec, rvec, mtx, dist, search_radius, img
         tg[i] = tvec + v
 
     projImgPoints, _ = cv2.projectPoints(tg,np.array([0.0,0.0,0.0]),np.array([0.0,0.0,0.0]), mtx, dist)
-    
+
     # Delete obj/img Points that are not in the picture
     targetObjPoints = []
     targetImgPoints = []
@@ -79,7 +79,7 @@ def calibrationCorners(basicObjPoints, tvec, rvec, mtx, dist, search_radius, img
     targetImgPointsSP = []
     for i, _ in enumerate(targetImgPointsArray):
         targetImgPointsSP.append(targetImgPointsArray[i])
-    
+
     # Delete not detected corners
     delIndexSP = []
     for i, _ in enumerate(targetImgPointsArray):
@@ -155,18 +155,18 @@ def calibrateCoded(parameter, img_all, gridHeight, gridWidth, mtx, dist, search_
     sortedDelIndex = sorted(delIndex, reverse = True)
     for i in sortedDelIndex:
         del basicObjPoints[i]
-    
+
     allObjPoints = []
     allImgPoints = []
-    
+
     # Loop over all images in this subset
     for img_num, img in enumerate(img_all):
-        
+
         # Marker detection
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
         corners, ids, _ = aruco.detectMarkers(gray, getDictonary(parameter), parameters=aruco.DetectorParameters_create()) #PARAMETER
         frame_markers = aruco.drawDetectedMarkers(img.copy(), corners)
-        
+
         # If AruCo is found
         if ids!=None:
 
@@ -205,5 +205,5 @@ def calibrateCoded(parameter, img_all, gridHeight, gridWidth, mtx, dist, search_
 
     # Print the results
     printResults(mtx, dist, rmse, gridHeight, gridWidth, search_radius)
-    
+
     return rmse, mtx, dist, allObjPoints, allImgPoints
