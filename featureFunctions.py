@@ -140,11 +140,6 @@ def calibrateCoded(parameter, img_all, gridHeight, gridWidth, mtx, dist, search_
     gridSize, arucoSize = parameter['gridSize'], parameter['arucoSize']
 
     # Calculate which checkerboard corners are missing because of the AruCo marker
-    # if gridHeight == 5 and gridWidth == 5:
-    #     delIndex = [7, 8, 11, 12, 13, 16, 17]
-    # elif gridHeight == 7 and gridWidth == 9:
-    #     delIndex = [22, 23, 30, 31, 32, 39, 40] # TODO: automatisch berechnen?
-
     delIndex = deleteAruCoHidden(gridHeight, gridWidth, parameter)
 
     # Get the object points
