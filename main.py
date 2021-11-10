@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-
-Main File.
+"""Main File.
 
 Created on Sun Jan 17 11:06:18 2021
 @author: ebert, schramm
