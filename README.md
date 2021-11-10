@@ -13,7 +13,7 @@ Please cite the following paper when using our code in your research project:
   number = {2}, 
   volume = {10},
   pages = {207--218},
-	doi = {10.5194/jsss-10-207-2021}
+  doi = {10.5194/jsss-10-207-2021}
 }
 ```
 
