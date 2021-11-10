@@ -2,7 +2,6 @@
 
 Iterative corner detection of a coded checkerboard target for the geometric calibration of infrared cameras
 
-
 Please cite the following paper when using our code in your research project:
 ```BibTeX
 @INPROCEEDINGS{Schramm2021b,
