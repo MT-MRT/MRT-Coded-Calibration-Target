@@ -185,7 +185,7 @@ def calibrateCoded(parameter, img_all, gridHeight, gridWidth, mtx, dist, search_
             # Append the points from this image to the list of all images
             allObjPoints.append(np.asarray(targetObjPoints))
             allImgPoints.append(np.asarray(targetImgPointsSP))
-            
+
             # Plot the found points
             if plot == True:
                 if img_num in parameter['plotList']:
