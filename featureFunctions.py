@@ -190,7 +190,7 @@ def calibrateCoded(parameter, img_all, gridHeight, gridWidth, mtx, dist, search_
             if plot == True:
                 if img_num in parameter['plotList']:
                     plotFunc(img_num, targetObjPoints, projImgPoints, targetImgPointsSP, frame_markers)
-                
+
         # Raise an error if the marker wasn't found
         else:
             print("Error: " + str(img_num) + " (No marker detected!)\n")
