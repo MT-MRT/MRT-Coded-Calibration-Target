@@ -38,9 +38,13 @@ if __name__ == '__main__':
         img_all.append(cv2.imread(parameter['path'] + img_name))
         img_all[-1] = cv2.cvtColor(img_all[-1], cv2.COLOR_BGR2RGB)
         gray = cv2.cvtColor(img_all[-1], cv2.COLOR_RGB2GRAY)
-        corners, _, _ = aruco.detectMarkers(gray, aruco_dict, parameters=aruco.DetectorParameters_create())
-        if corners != []:
-            imgCorners.append(np.swapaxes(np.asarray(corners[0][:,:,:]),0,1))
+        corners, ids, _ = aruco.detectMarkers(gray, aruco_dict, parameters=aruco.DetectorParameters_create())
+        if ids is not None:
+            if len(ids) == 1:
+                imgCorners.append(np.swapaxes(np.asarray(corners[0][:,:,:]),0,1))
+            else:
+                print('Two ArUco marker found in', img_name)
+                del(img_all[-1])
         else:
             print('No corner found in', img_name)
             del(img_all[-1])
