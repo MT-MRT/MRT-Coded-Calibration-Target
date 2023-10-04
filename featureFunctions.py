@@ -16,15 +16,17 @@ def printResults(mtx, dist, ret, gridHeight = -1, gridWidth = -1, sr = -1):
     print("-"*60)
 
 # Get the correct AruCo-dictionary
-def getDictonary(parameter):
+def getDetector(parameter):
     if parameter['aruco_dict'] == 'aruco.DICT_4X4_1000':
-        aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_1000)
+        aruco_dict = cv2.aruco.getPredefinedDictionary(aruco.DICT_4X4_1000)
     elif parameter['aruco_dict'] == 'aruco.DICT_3X3_1':
-        aruco_dict = cv2.aruco.custom_dictionary(1,3)
+        aruco_dict = cv2.aruco.extendDictionary(1, 3)
     else:
         print('ERROR! The aruco dictionary is not defined!')
         exit()
-    return aruco_dict
+    detector_params = cv2.aruco.DetectorParameters()
+    detector = cv2.aruco.ArucoDetector(aruco_dict, detector_params)
+    return detector
 
 # Plot the obj- and imgPoints with pyplot
 def plotFunc(img_num, targetObjPoints, projImgPoints, targetImgPointsSP, frame_markers):
@@ -159,7 +161,8 @@ def calibrateCoded(parameter, img_all, gridHeight, gridWidth, mtx, dist, search_
 
         # Marker detection
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-        corners, ids, _ = aruco.detectMarkers(gray, getDictonary(parameter), parameters=aruco.DetectorParameters_create()) #PARAMETER
+        detector = getDetector(parameter)
+        corners, ids, _ = detector.detectMarkers(gray) #PARAMETER
         frame_markers = aruco.drawDetectedMarkers(img.copy(), corners)
 
         # If AruCo is found

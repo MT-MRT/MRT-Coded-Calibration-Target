@@ -27,7 +27,7 @@ if __name__ == '__main__':
     rmse = 0.0
 
     # Set AruCo parameter
-    aruco_dict = ff.getDictonary(parameter)
+    detector = ff.getDetector(parameter)
     gridSize, arucoSize = parameter['gridSize'], parameter['arucoSize']
 
     # Load images and check for target
@@ -38,7 +38,7 @@ if __name__ == '__main__':
         img_all.append(cv2.imread(parameter['path'] + img_name))
         img_all[-1] = cv2.cvtColor(img_all[-1], cv2.COLOR_BGR2RGB)
         gray = cv2.cvtColor(img_all[-1], cv2.COLOR_RGB2GRAY)
-        corners, ids, _ = aruco.detectMarkers(gray, aruco_dict, parameters=aruco.DetectorParameters_create())
+        corners, ids, _ = detector.detectMarkers(gray)
         if ids is not None:
             if len(ids) == 1:
                 imgCorners.append(np.swapaxes(np.asarray(corners[0][:,:,:]),0,1))
